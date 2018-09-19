@@ -1,4 +1,3 @@
-/* global JsUtils */
 
 define(['bajaux/Widget', 'bajaux/mixin/subscriberMixIn', 'nmodule/COREx/rc/d3/d3.min', 'nmodule/COREx/rc/jsClasses/JsUtils'], function (Widget, subscriberMixIn, d3, JsUtils) {
 	'use strict';
@@ -123,7 +122,9 @@ define(['bajaux/Widget', 'bajaux/mixin/subscriberMixIn', 'nmodule/COREx/rc/d3/d3
     d3.select(widget.svg.node().parentNode).style('background-color', data.backgroundColor);
 		// delete leftover elements from versions previously rendered
 		if (!widget.svg.empty()) JsUtils.resetElements(widget.svg, '*');
-		const graphicGroup = widget.svg.append('g').attr('class', 'graphicGroup');
+		const graphicGroup = widget.svg.append('g')
+			.attr('class', 'graphicGroup')
+			.attr('transform', `translate(${margin}, ${margin})`);
 
 
 		graphicGroup.append('text')

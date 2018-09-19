@@ -1,0 +1,41 @@
+{
+    "root": true,
+    "env": {
+      "browser": true,
+      "commonjs": true,
+      "node": true,
+      "mocha": true,
+       "es6": true
+    },
+    "extends": ["eslint:recommended"],
+        "parserOptions": {
+          "ecmaFeatures": {
+              "experimentalObjectRestSpread": true,
+              "jsx": true
+          },
+          "sourceType": "module"
+      },
+
+    "globals": {
+        "d3": true,
+        "define": false
+    },
+
+    "rules": {
+      "arrow-parens": ["warn", "as-needed"],
+      "arrow-spacing": "warn",
+      "camelcase": "warn",
+      "dot-notation": "warn",
+      "key-spacing": ["warn", {"beforeColon": false, "afterColon": true, "mode": "minimum"}],
+      "keyword-spacing": "warn",
+      "no-console": "off",
+      "no-empty": "off",
+      "no-redeclare": "off",
+      "no-undef": "error",
+      "no-unused-vars": ["warn", {"args": "none"}],
+      "react/prop-types": "off",
+      "react/jsx-no-bind": "off",
+      "no-mixed-spaces-and-tabs": "off"
+    }
+  }
+  
