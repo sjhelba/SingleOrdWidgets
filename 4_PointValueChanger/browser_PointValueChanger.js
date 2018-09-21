@@ -3,30 +3,14 @@
 function defineFuncForTabSpacing () {
 
 	////////// Hard Coded Defs //////////
-	// const arePrimitiveValsInObjsSame = (obj1, obj2) => !Object.keys(obj1).some(key => (obj1[key] === null || (typeof obj1[key] !== 'object' && typeof obj1[key] !== 'function')) && obj1[key] !== obj2[key])
-	// // 0 layers means obj only has primitive values
-	// // this func only works with obj literals or arrays layered with obj literals or arrays until base layer only primitive
-	// const checkNestedObjectsEquivalence = (objA, objB, layers) => {
-	// 	if (layers === 0) {
-	// 		return arePrimitiveValsInObjsSame(objA, objB);
-	// 	} else {
-	// 		const objAKeys = Object.keys(objA);
-	// 		const objBKeys = Object.keys(objB);
-	// 		if (objAKeys.length !== objBKeys.length) return false;
-	// 		const somethingIsNotEquivalent = objAKeys.some(key => !checkNestedObjectsEquivalence(objA[key], objB[key], layers - 1));
-	// 		return !somethingIsNotEquivalent;
-	// 	}
-	// };
-	// const needToRedrawWidget = (widget, newData) => {
-	// 	const lastData = widget.data;
-	// 	// check primitives for equivalence
-	// 	if (!arePrimitiveValsInObjsSame(lastData, newData)) return true;
-	// 	// check nested arrays for equivalence
-	// 	const monthlyModulesAreSame = checkNestedObjectsEquivalence(lastData.tableData, newData.tableData, 2);
-	// 	if (!monthlyModulesAreSame) return true;
-	// 	//return false if nothing prompted true
-	// 	return false;
-	// };
+	const arePrimitiveValsInObjsSame = (obj1, obj2) => !Object.keys(obj1).some(key => (obj1[key] === null || (typeof obj1[key] !== 'object' && typeof obj1[key] !== 'function')) && obj1[key] !== obj2[key])
+	const needToRedrawWidget = (widget, newData) => {
+		const lastData = widget.data;
+		// check primitives for equivalence
+		if (!arePrimitiveValsInObjsSame(lastData, newData)) return true;
+		//return false if nothing prompted true
+		return false;
+	};
 	const margin = 5;
 
 
@@ -56,8 +40,8 @@ function defineFuncForTabSpacing () {
 		properties.forEach(prop => data[prop.name] = prop.value);
 
 		// FROM JQ //
-		data.jqHeight = 110;
-		data.jqWidth = 130;
+		data.jqHeight = 50;
+		data.jqWidth = 105;
 
 		// SIZING //
 		data.graphicHeight = data.jqHeight - (margin * 2);
@@ -65,20 +49,21 @@ function defineFuncForTabSpacing () {
 
 
 		// DATA TO POPULATE //
-		widget.value = 2.5
+		if (!widget.value) widget.value = 2.5
+		data.value = widget.value;
 		const facets = {units: 'F', precision: 1};
 		const precision = facets.precision;
-		data.displayValue = JsUtils.formatToPrecision(widget.value, precision);
-		data.displayName = data.labelOverride === 'null' ? 'Supply Offset' : data.labelOverride;
-		data.units = facets.units;
+		const widgetValueDisplayName = 'Supply Offset'
 
-		
+		data.displayName = data.labelOverride === 'null' ? widgetValueDisplayName : data.labelOverride;
+		data.units = facets.units || '';
+		data.displayValue = JsUtils.formatValueToPrecision(data.value, precision);
+
+
 		data.changeValue = newValue => {
-			return widget.value.invoke({slot: 'set', value: +newValue})
-			.then(() => render(widget, true))
-			.catch(err => console.error(data.displayName + ' value change error: ' + err))
+			widget.value = newValue;
+			render(widget, true);
 		}
-
 
 		return data;
 
@@ -102,15 +87,13 @@ function defineFuncForTabSpacing () {
 		const titleFont = '12.0pt Nirmala UI'
 		const buttonTextHeight = JsUtils.getTextHeight(buttonFont);
 		const titleTextHeight = JsUtils.getTextHeight(titleFont);
-		const verticalBoxPadding = 3;
-		const horizontalBoxPadding = 12;
+		const verticalBoxPadding = 2;
+		const horizontalBoxPadding = 20;
 		const buttonHeight = buttonTextHeight + (verticalBoxPadding * 3)
-		const rowHeight = d3.max([buttonHeight, titleTextHeight]);
-		const spaceBetweenRows = 10;
+		const spaceBetweenRows = 2;
 		const valueWidth = JsUtils.getTextWidth(data.displayValue, buttonFont);
 		const valueBoxWidth = valueWidth + (horizontalBoxPadding * 2);
-		const unitLabelWidth = JsUtils.getTextWidth(data.units, buttonFont);
-		const spaceRightOfBox = 3;
+		const spaceRightOfBox = 5;
 		const rectStrokeColor = 'silver';
 		const rectHoverStrokeColor = 'gray'
 		const rectClickColor = 'gray'
@@ -130,47 +113,48 @@ function defineFuncForTabSpacing () {
 			.style('cursor', 'default')
 
 		const row1 = graphicGroup.append('g').attr('class', 'row1').style('font', buttonFont)
-		const row2 = graphicGroup.append('g').attr('class', 'row2').style('font', titleFont)
+		const row2 = graphicGroup.append('g').attr('class', 'row2').style('font', titleFont).attr('transform', `translate(0, ${buttonHeight + spaceBetweenRows + titleTextHeight})`)
 
 		// ********************************************* ROW 1 ******************************************************* //
-
-			//hours
-		const hoursGroup = row1.append('g').attr('class', 'hoursGroup')
-			.on('mouseover', () => hoursRect.attr('stroke', rectHoverStrokeColor))
-			.on('mouseout', () => hoursRect.attr('stroke', rectStrokeColor))
-			.on('mousedown', () => hoursRect.attr('fill', rectClickColor))
-			.on('mouseup', () => hoursRect.attr('fill', data.backgroundColor))
+		const valueButton = row1.append('g').attr('class', 'valueButton')
+			.on('mouseover', () => valueRect.attr('stroke', rectHoverStrokeColor))
+			.on('mouseout', () => valueRect.attr('stroke', rectStrokeColor))
+			.on('mousedown', () => valueRect.attr('fill', rectClickColor))
+			.on('mouseup', () => valueRect.attr('fill', data.backgroundColor))
 			.on('click', function() {
-				const hoursPrompt = prompt('Set Preset Hours', hoursDisplay)
-				if (hoursPrompt == null || hoursPrompt == "" || hoursPrompt == hoursDisplay) {
-					console.log('cancel')
-				} else if (hoursPrompt.length > 5 || isNaN(hoursPrompt)) {
-					alert('Set hours must be numbers with a max of 5 digits')
+				const valuePrompt = prompt('Set ' + data.displayName + ' value', data.displayValue)
+				if (valuePrompt == null || valuePrompt == "" || valuePrompt == data.displayValue || valuePrompt == data.value) {
+				} else if (isNaN(valuePrompt)) {
+					alert('Input value must be a number');
 				} else {
-					data.preset.setValue({hours: hoursPrompt})
-						.then(() => renderWidget(widget, data))
+					data.changeValue(valuePrompt);
 				}
 			})
-		const hoursRect = hoursGroup.append('rect')
+		const valueRect = valueButton.append('rect')
 			.attr('height', buttonHeight)
-			.attr('width', hoursBoxWidth)
+			.attr('width', valueBoxWidth)
 			.attr('stroke', rectStrokeColor)
 			.attr('fill', data.backgroundColor)
 			.attr('rx', 2.5)
 			.attr('ry', 2.5)
-		const hoursValue = hoursGroup.append('text')
-			.text(hoursDisplay)
-			.attr('y', buttonTextHeight + boxPadding)
-			.attr('x', boxPadding);
-		const hoursLabel = hoursGroup.append('text')
-			.text('h')
-			.attr('y', buttonTextHeight + boxPadding)
-			.attr('x', hoursBoxWidth + spaceRightOfBox)
+		const valueText = valueButton.append('text')
+			.text(data.displayValue)
+			.attr('y', verticalBoxPadding + buttonTextHeight)
+			.attr('x', horizontalBoxPadding);
+		const unitsLabel = row1.append('text')
+			.text(data.units)
+			.attr('y', verticalBoxPadding + buttonTextHeight)
+			.attr('x', valueBoxWidth + spaceRightOfBox)
 
 		// ********************************************* ROW 2 ******************************************************* //
-			graphicGroup.select('.row2').append('text')
-			.style('font', titleFont)
-			.text(data.displayName)
+			row2.append('text')
+				.style('font', titleFont)
+				.text(data.displayName)
+
+
+
+
+		graphicGroup.selectAll('text').attr('fill', textColor)
 	};
 	
 

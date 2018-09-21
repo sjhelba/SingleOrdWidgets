@@ -317,6 +317,8 @@ function defineFuncForTabSpacing () {
 			.attr('width', 0)
 			.attr('x', (hoursBoxWidth + spaceAfterBox + timeLabelWidth + spaceAfterTimeLabel) + (resetAndBypassButtonWidth / 2))
 
+
+			graphicGroup.selectAll('text').attr('fill', textColor)
 	};
 	
 

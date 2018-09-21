@@ -327,6 +327,7 @@ define(['bajaux/Widget', 'bajaux/mixin/subscriberMixIn', 'nmodule/COREx/rc/d3/d3
 			.attr('x', (hoursBoxWidth + spaceAfterBox + timeLabelWidth + spaceAfterTimeLabel) + (resetAndBypassButtonWidth / 2))
 
 
+			graphicGroup.selectAll('text').attr('fill', textColor)
 
 
 
