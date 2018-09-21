@@ -1,12 +1,12 @@
 
 class Gauge {
-	constructor(elementToAppendGaugeTo, timerType = 'On', onReason = 'Temperature', preset = 15, timeLeft = 15, height = 125, width = 125) {
+	constructor(elementToAppendGaugeTo, timerType = 'On', timerOnReason = 'Temperature', timerPreset = 15, timerTimeLeft = 15, height = 125, width = 125) {
     this.timerType = timerType // On, Off, COS, or Standby
-    this.onReason = onReason // Efficiency, Temperature, or Flow
+    this.timerOnReason = timerOnReason // Efficiency, Temperature, or Flow
     this.height = height;
     this.width = width;
-		this.timeLeft = timeLeft;
-    this.previoustimeLeft = timeLeft;
+		this.timerTimeLeft = timerTimeLeft;
+    this.previousTimeLeft = timerTimeLeft;
     this.margin = 5;
     this.verticalPadding = 5;
     this.backgroundArcColor = '#e0ebeb';
@@ -16,7 +16,7 @@ class Gauge {
     this.title1Font = 'bold 13.0pt Nirmala UI';	// Niagara: 18
     this.title2Font = '10.0pt Nirmala UI';	// Niagara: 14
     this.minVal = 0; //secondsCountingFrom if timer
-    this.maxVal = preset;
+    this.timerPreset = timerPreset;
     this.calculateCalculatedProps();
     this.element = elementToAppendGaugeTo.append('g')
       .attr('class', 'gaugeElement')
@@ -38,13 +38,13 @@ class Gauge {
     //gaugeArc
     chartGroup.append('path')
       .attr('class', 'gaugeArc')
-      .datum({ endAngle: this.angleScale(this.previoustimeLeft) })
+      .datum({ endAngle: this.angleScale(this.previousTimeLeft) })
       .attr('fill', this.foregroundArcColor)
-      .attr('d', this.gaugeArcGenerator(this.angleScale(this.previoustimeLeft)))
+      .attr('d', this.gaugeArcGenerator(this.angleScale(this.previousTimeLeft)))
       .transition()
         .duration(250)
         // gradually transition end angle from minValForArc to true val angle
-        .attrTween('d', this.arcTween(this.angleScale(this.timeLeft)));
+        .attrTween('d', this.arcTween(this.angleScale(this.timerTimeLeft)));
 
     //title1
     if (this.timerType === 'Standby') {
@@ -71,7 +71,7 @@ class Gauge {
         .style("text-anchor", "middle")
         .attr('y', this.title2Y)
         .style('font', this.title2Font)
-        .text(this.timerType === 'Standby' ? 'Standby' : this.timeLeft === 0 ? '' : this.onReason);
+        .text(this.timerType === 'Standby' ? 'Standby' : this.timerTimeLeft === 0 ? '' : this.timerOnReason);
     }
 
 
@@ -83,7 +83,7 @@ class Gauge {
   }
 
   calculateCalculatedProps() {
-    this.title1 = this.timeLeft === 0 ? '' : this.timeLeft <= 10 ? this.timeLeft + ' sec' : this.timerType;
+    this.title1 = this.timerTimeLeft === 0 ? '' : this.timerTimeLeft <= 10 ? this.timerTimeLeft + ' sec' : this.timerType;
     if (this.timerType === 'On' || this.timerType === 'Standby') {
       this.title1Y = -(this.verticalPadding / 2);
       this.title2Y = (this.verticalPadding / 2) + JsUtils.getTextHeight(this.title2Font);
@@ -104,7 +104,7 @@ class Gauge {
       .outerRadius(this.gaugeArcOuterRadius);
     // returns scaling func that returns angle in radians for a value
     this.angleScale = d3.scaleLinear()
-      .domain([this.minVal, this.maxVal])
+      .domain([this.minVal, this.timerPreset])
       .range([this.startAngle, this.endAngle]);
     // Arc Generators return d values for paths
     this.gaugeArcGenerator = d3.arc()
@@ -125,7 +125,7 @@ class Gauge {
   redrawWithNewArgs(newArgsObj) {
     const that = this;
     JsUtils.resetElements(that.element, '*');
-    that.previoustimeLeft = that.timeLeft;
+    that.previousTimeLeft = that.timerTimeLeft;
     let count = 0;
     for (let param in newArgsObj) {
       if (newArgsObj.hasOwnProperty(param)) {
@@ -133,9 +133,9 @@ class Gauge {
         count++;
       }
     }
-    // if more than one property has changed (thus properties other than timeLeft have changed), don't start at previous value
+    // if more than one property has changed (thus properties other than timerTimeLeft have changed), don't start at previous value
     if (count > 1) {
-      that.previoustimeLeft = that.timeLeft
+      that.previousTimeLeft = that.timerTimeLeft
     }
     that.calculateCalculatedProps();
     that.create();

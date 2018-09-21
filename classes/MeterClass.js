@@ -163,8 +163,6 @@ class Meter {
   //  {paramName: newArg, paramName: newArg, paramName: newArg}
   redrawWithNewArgs(newArgsObj) {
 		const that = this;
-		console.log('METER: that.units prior to change', that.units)
-		console.log('METER: that.meterVal prior to change', that.meterVal)
 
 			if (this.hasTooltip) {
 				JsUtils.resetElements(that.tooltip.element, '*');
@@ -182,8 +180,7 @@ class Meter {
 			if (count > 1) {
 				that.previousMeterVal = that.meterVal
 			}
-			console.log('METER: that.units after change', that.units)
-			console.log('METER: that.meterVal after change', that.meterVal)
+
 			that.calculateCalculatedProps();
 			that.create(true);
 		}

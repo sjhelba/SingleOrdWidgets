@@ -98,30 +98,25 @@ function defineFuncForTabSpacing () {
 			.style('height', data.jqHeight + 'px')	//only for browser
 			.style('width', data.jqWidth + 'px')		//only for browser
 		// ********************************************* DEFINE ******************************************************* //
-		const buttonFont = 'bold 12.0pt Nirmala UI';
-		const titleFont = '14.0pt Nirmala UI'
+		const buttonFont = 'bold 10.0pt Nirmala UI';
+		const titleFont = '12.0pt Nirmala UI'
 		const buttonTextHeight = JsUtils.getTextHeight(buttonFont);
 		const titleTextHeight = JsUtils.getTextHeight(titleFont);
-		const boxPadding = 4
-		const buttonHeight = buttonTextHeight + (boxPadding * 3)
+		const verticalBoxPadding = 3;
+		const horizontalBoxPadding = 12;
+		const buttonHeight = buttonTextHeight + (verticalBoxPadding * 3)
 		const rowHeight = d3.max([buttonHeight, titleTextHeight]);
 		const spaceBetweenRows = 10;
 		const valueWidth = JsUtils.getTextWidth(data.displayValue, buttonFont);
-		const valueBoxWidth = valueWidth + (boxPadding * 2);
-		const timeLabelWidth = JsUtils.getTextWidth('m', buttonFont);
-		const spaceAfterBox = 3;
-		const spaceAfterTimeLabel = 10;
-		const resetAndBypassButtonWidth = JsUtils.getTextWidth('Bypass', buttonFont) + (boxPadding * 2);
-		const resetBoxPadding = (resetAndBypassButtonWidth - JsUtils.getTextWidth('Reset', buttonFont)) / 2
-		const rectStrokeColor = 'gray';
-		const rectHoverStrokeColor = 'lightgray'
-		const rectClickColor = 'oldlace'
-		const textColor = 'black'
-		const grayedOutColor = 'gray'
-		const resetStroke = 'green'
-		const hoveredResetStroke = 'greenyellow'
-		const bypassStroke = 'gold'
-		const hoveredBypassStroke = 'khaki'
+		const valueBoxWidth = valueWidth + (horizontalBoxPadding * 2);
+		const unitLabelWidth = JsUtils.getTextWidth(data.units, buttonFont);
+		const spaceRightOfBox = 3;
+		const rectStrokeColor = 'silver';
+		const rectHoverStrokeColor = 'gray'
+		const rectClickColor = 'gray'
+		const textColor = '#404040'
+		const boxWeight = 2;
+
 
 
 		// ********************************************* DRAW ******************************************************* //
@@ -131,18 +126,13 @@ function defineFuncForTabSpacing () {
 		const graphicGroup = widget.svg.append('g')
 			.attr('class', 'graphicGroup')
 			.attr('transform', `translate(${margin}, ${margin})`)
-			.attr('stroke-width', 3)
+			.attr('stroke-width', boxWeight)
 			.style('cursor', 'default')
 
-
-		const rows = graphicGroup.selectAll('.row')
-			.data(['row1', 'row2'])
-			.enter().append('g')
-				.attr('class', d => `row ${d}`)
-				.attr('transform', (d, i) => `translate(0, ${titleTextHeight + (i ? ((i-1) * rowHeight) + (i * spaceBetweenRows) : 0)})`)
+		const row1 = graphicGroup.append('g').attr('class', 'row1').style('font', buttonFont)
+		const row2 = graphicGroup.append('g').attr('class', 'row2').style('font', titleFont)
 
 		// ********************************************* ROW 1 ******************************************************* //
-		const row1 = graphicGroup.select('.row1').style('font', buttonFont)
 
 			//hours
 		const hoursGroup = row1.append('g').attr('class', 'hoursGroup')
@@ -175,7 +165,7 @@ function defineFuncForTabSpacing () {
 		const hoursLabel = hoursGroup.append('text')
 			.text('h')
 			.attr('y', buttonTextHeight + boxPadding)
-			.attr('x', hoursBoxWidth + spaceAfterBox)
+			.attr('x', hoursBoxWidth + spaceRightOfBox)
 
 		// ********************************************* ROW 2 ******************************************************* //
 			graphicGroup.select('.row2').append('text')
