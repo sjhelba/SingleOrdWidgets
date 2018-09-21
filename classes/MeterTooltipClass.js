@@ -1,7 +1,7 @@
 class MeterTooltip {
 	constructor(meter, elementToAppendTo) {
     this.meter = meter;
-    this.margin = 7;
+    this.margin = 3;
     this.minRightOfLabel = 8;
     this.rightOfNum = 3;
     this.verticalPadding = 3;
@@ -13,8 +13,8 @@ class MeterTooltip {
   }
 
   calculateCalculatedProps() {
-    this.height = (this.margin * 3) + ( JsUtils.getTextHeight(this.meter.titleFont) * (this.meter.isDesignVal ? 3 : 2) ) + ( this.verticalPadding * (this.meter.isDesignVal ? 2 : 1) );
-    this.width = (this.margin * 2) + JsUtils.getTextWidth(this.meter.title, 'bold ' + this.meter.titleFont) + this.rightOfTitle + JsUtils.getTextWidth(this.meter.isDesignVal ? 'Design:' : 'Max:', this.meter.titleFont) + this.minRightOfLabel + this.meter.greatestNumWidth + this.rightOfNum + JsUtils.getTextWidth(this.meter.units, this.meter.unitsFont);
+    this.height = (this.margin * 3) + (JsUtils.getTextHeight(this.meter.titleFont) * (this.meter.isDesignVal ? 4 : 3) ) + ( this.verticalPadding * (this.meter.isDesignVal ? 3 : 2) );
+    this.width = (this.margin * 2) + (this.rightOfTitle * 2) + JsUtils.getTextWidth(this.meter.isDesignVal ? 'Design:' : 'Max:', this.meter.titleFont) + this.minRightOfLabel + this.meter.greatestNumWidth + this.rightOfNum + JsUtils.getTextWidth(this.meter.units, this.meter.unitsFont);
   }
 
   create(areNewArgs) {
@@ -39,18 +39,21 @@ class MeterTooltip {
       .style('font', 'bold ' + this.meter.titleFont)
       .attr('y', JsUtils.getTextHeight('bold ' + this.meter.titleFont))
     
-    const row1 = textGroup.append('g')
+    const row0 = textGroup.append('g')
       .attr('class', 'labelsColumn')
       .attr('transform', `translate(0, ${JsUtils.getTextHeight(this.meter.numFont)})`);
+    const row1 = textGroup.append('g')
+      .attr('class', 'labelsColumn')
+      .attr('transform', `translate(0, ${( JsUtils.getTextHeight(this.meter.numFont) * 2 ) + this.verticalPadding})`);
     const row2 = textGroup.append('g')
       .attr('class', 'numsColumn')
-      .attr('transform', `translate(0, ${( JsUtils.getTextHeight(this.meter.numFont) * 2 ) + this.verticalPadding})`);
+      .attr('transform', `translate(0, ${( JsUtils.getTextHeight(this.meter.numFont) * 3 ) + (this.verticalPadding * 2)})`);
     const row3 = !this.meter.isDesignVal ? undefined : textGroup.append('g')
       .attr('class', 'unitsColumn')
-      .attr('transform', `translate(0, ${( JsUtils.getTextHeight(this.meter.numFont) * 3 ) + (this.verticalPadding * 2)})`);
+      .attr('transform', `translate(0, ${( JsUtils.getTextHeight(this.meter.numFont) * 4 ) + (this.verticalPadding * 3)})`);
 
-    const labelsColumnX = JsUtils.getTextWidth(this.meter.title, 'bold ' + this.meter.titleFont) + this.rightOfTitle;
-    const numsColumnX = JsUtils.getTextWidth(this.meter.title, 'bold ' + this.meter.titleFont) + this.rightOfTitle + JsUtils.getTextWidth(this.meter.isDesignVal ? 'Design:' : 'Max:', this.meter.titleFont) + this.minRightOfLabel;
+    const labelsColumnX = this.rightOfTitle;
+    const numsColumnX = this.rightOfTitle + JsUtils.getTextWidth(this.meter.isDesignVal ? 'Design:' : 'Max:', this.meter.titleFont) + this.minRightOfLabel;
 
     //Min Label
     row1.append('text')

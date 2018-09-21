@@ -90,7 +90,7 @@ class Gauge {
       this.foregroundArcColor = '#feb550';
     } else {
       this.title1Y = JsUtils.getTextHeight(this.title1Font) / 2;
-      this.foregroundArcColor = this.timerType === 'Off' ? '#425867' : this.timerType === 'COS' ? '#404040' : 'none';
+      this.foregroundArcColor = this.timerType === 'Off' ? '#425867' : this.timerType === 'COS' ? '#606060' : 'none';
     }
 
     this.gaugeArcOuterRadius = this.height < this.width ? (this.height / 2) - 5 : (this.width / 2) - 5;

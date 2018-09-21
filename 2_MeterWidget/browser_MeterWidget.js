@@ -122,7 +122,7 @@ function defineFuncForTabSpacing () {
 		const meterTitleFont = '10.0pt Nirmala UI';
 		const meterUnitsFont = 'bold 10.0pt Nirmala UI';
 		const meterNumFont = 'bold 10.0pt Nirmala UI';
-		const meterHeight = 15;
+		const meterHeight = 12;
 		const meterObjHeight = Meter.getHeightFromMeterHeight(meterHeight, meterTitleFont, meterUnitsFont, meterNumFont);	//36.3
 
 

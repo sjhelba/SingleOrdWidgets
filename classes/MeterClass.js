@@ -35,8 +35,9 @@ class Meter {
     this.isDesignVal = this.designVal || this.designVal === 0 ? true : false;
 		this.greatestTextHeight = d3.max([JsUtils.getTextHeight(this.titleFont), JsUtils.getTextHeight(this.unitsFont), JsUtils.getTextHeight(this.numFont)]);
     this.greatestNumWidth = d3.max([JsUtils.getTextWidth(JsUtils.formatValueToPrecision(this.minVal, this.precision), this.numFont), JsUtils.getTextWidth(JsUtils.formatValueToPrecision(this.maxVal, this.precision), this.numFont), this.isDesignVal ? JsUtils.getTextWidth(JsUtils.formatValueToPrecision(this.designVal, this.precision), this.numFont) : 0]);
-    this.barLength = this.width - (this.margin * 2);
-    this.barHeight = this.height - ( (this.margin * 2) + this.greatestTextHeight + this.verticalTextPadding );
+    this.barLength = this.width;
+		this.barHeight = this.height - ( (this.margin * 2) + this.greatestTextHeight + this.verticalTextPadding );
+		this.barRoundedness = this.barHeight / 2
   }
 
 	create(areNewArgs) {
@@ -56,8 +57,8 @@ class Meter {
 			.attr('width', this.barLength)
 			.attr('fill', this.backgroundBarColor)
 			.attr('stroke', 'none')
-			.attr('rx', 5)
-			.attr('ry', 5);
+			.attr('rx', this.barRoundedness)
+			.attr('ry', this.barRoundedness);
 		//foregroundBar
 		barGroup.append('rect')
 			.attr('class', 'foregroundBar')
@@ -65,8 +66,8 @@ class Meter {
 			.attr('width', scaleValue(this.previousMeterVal, this.minVal, this.maxVal, this.barLength))
 			.attr('fill', this.foregroundBarColor)
 			.attr('stroke', 'none')
-			.attr('rx', 5)
-      .attr('ry', 5)
+			.attr('rx', this.barRoundedness)
+      .attr('ry', this.barRoundedness)
       .transition()
         .attr('width', scaleValue(this.meterVal, this.minVal, this.maxVal, this.barLength));
       
@@ -74,12 +75,14 @@ class Meter {
 			//designValBar
 			barGroup.append('rect')
 				.attr('class', 'designValBar')
-				.attr('height', this.barHeight + (this.barHeight / 2))
-				.attr('width', this.barHeight * 0.4)
-				.attr('x', scaleValue(this.designVal, this.minVal, this.maxVal, this.barLength))
-				.attr('y', -(this.barHeight / 4))
-				.attr('fill', '#f5f5f5')
-				.attr('stroke', 'none');
+				.attr('height', (this.barHeight * 2))
+				.attr('width', this.barHeight * 0.5)
+				.attr('x', scaleValue(this.designVal, this.minVal, this.maxVal, this.barLength) - (this.barHeight * 0.25))
+				.attr('y', -(this.barHeight / 2))
+				.attr('fill', '#d4d4d4')
+				.attr('stroke', 'none')
+				.attr('rx', this.barRoundedness / 2)
+				.attr('ry', this.barRoundedness / 2);
 		}
 		// invisible hoverable bar
 		barGroup.append('rect')
@@ -87,8 +90,8 @@ class Meter {
 			.attr('height', this.barHeight)
 			.attr('width', this.barLength)
 			.attr('opacity', '0')
-			.attr('rx', 5)
-			.attr('ry', 5)
+			.attr('rx', this.barRoundedness)
+			.attr('ry', this.barRoundedness)
 
 		const textGroup = this.element.append('g')
 			.attr('class', 'textGroup')
